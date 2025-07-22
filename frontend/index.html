@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Air Ticket Platform</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        form, table { margin-top: 1em; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+    </style>
+</head>
+<body>
+<h1>Air Ticket Search</h1>
+<form id="search-form">
+    <label>Origin:
+        <input name="origin" required>
+    </label>
+    <label>Destination:
+        <input name="destination" required>
+    </label>
+    <label>Date:
+        <input name="date" type="date" required>
+    </label>
+    <button type="submit">Search</button>
+</form>
+<div id="results"></div>
+<script>
+const form = document.getElementById('search-form');
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams(new FormData(form));
+    const res = await fetch(`/api/flights?${params.toString()}`);
+    const flights = await res.json();
+    const div = document.getElementById('results');
+    if (!flights.length) {
+        div.textContent = 'No flights found.';
+        return;
+    }
+    let html = '<table><tr><th>Flight</th><th>Origin</th><th>Destination</th><th>Date</th><th>Price</th></tr>';
+    for (const f of flights) {
+        html += `<tr><td>${f.flight_no}</td><td>${f.origin}</td><td>${f.destination}</td><td>${f.date}</td><td>${f.price}</td></tr>`;
+    }
+    html += '</table>';
+    div.innerHTML = html;
+});
+</script>
+</body>
+</html>
